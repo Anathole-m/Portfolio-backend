@@ -95,6 +95,70 @@ app.post("/info", async (req, res) => {
     });
   }
 });
+// update information
+
+app.put("/info/update", async(req,res)=>{
+  const {
+    title,
+    description,
+    technologies,
+    image,
+    githubLink,
+    liveLink,
+    isFeatured
+  } = req.body;
+  const{id}=req.query;
+  const update = await PortfolioModel.findByIdAndUpdate(id,{
+    title,
+    description,
+    technologies,
+    image,
+    githubLink,
+    liveLink,
+    isFeatured,
+  },
+  {
+    new: true, // return updated doc
+    runValidators: true, // apply schema validation
+  }
+)
+if (!update) {
+  return res.status(404).json({ message: "Info not found" });
+}
+  res.status(201).json({"message":"data updated succufully","updatedInfo":update})
+})
+
+//update specific info
+
+app.put("/info/specific", async(req,res)=>{
+   const{id}=req.query
+   const updateSpec= await PortfolioModel.findByIdAndUpdate(id,req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+   )
+   if (!updateSpec) {
+    return res.status(404).json({ message: "Item not found" });
+  }
+  res.status(201).json({"message":"data updated succufully","updatedInfo":updateSpec})
+
+})
+//Delete info
+
+app.delete("/info/delete", async (req, res) => {
+  const { id } = req.query;
+  const Delete = await PortfolioModel.findByIdAndDelete(id)
+
+  res.status(204).json({"deleted":Delete})
+
+})
+
+//select all information
+app.get("/info/select", async(req,res)=>{
+  const allInfo= await PortfolioModel.find()
+  res.status(201).json({"allinformation":allInfo})
+})
 // Start server
 app.listen(3000, () => {
   console.log("Server running on http://localhost:3000");
