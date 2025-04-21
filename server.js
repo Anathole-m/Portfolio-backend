@@ -1,10 +1,17 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 const app = express();
 
 // Middleware to parse JSON from requests
 app.use(express.json());
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}))
+
 
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/Portfolio", {
@@ -97,7 +104,7 @@ app.post("/info", async (req, res) => {
 });
 // update information
 
-app.put("/info/update", async(req,res)=>{
+app.put("/info/update/:id", async(req,res)=>{
   const {
     title,
     description,
@@ -130,7 +137,7 @@ if (!update) {
 
 //update specific info
 
-app.put("/info/specific", async(req,res)=>{
+app.put("/info/specific/:id", async(req,res)=>{
    const{id}=req.query
    const updateSpec= await PortfolioModel.findByIdAndUpdate(id,req.body,
     {
@@ -146,7 +153,7 @@ app.put("/info/specific", async(req,res)=>{
 })
 //Delete info
 
-app.delete("/info/delete", async (req, res) => {
+app.delete("/info/delete/:id", async (req, res) => {
   const { id } = req.query;
   const Delete = await PortfolioModel.findByIdAndDelete(id)
 
